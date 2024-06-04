@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 9065107313743419774}
   - component: {fileID: 1731574618551238823}
   - component: {fileID: 5520230328624670409}
-  - component: {fileID: 3578748241916908752}
+  - component: {fileID: 136714078629049205}
   - component: {fileID: 5172689143095698625}
   - component: {fileID: -1885930411363224881}
   m_Layer: 3
@@ -134,9 +134,9 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &1731574618551238823
 MonoBehaviour:
@@ -176,7 +176,7 @@ MonoBehaviour:
   jumpForce: 3
   gravity: 9.81
   isFinished: 0
---- !u!114 &3578748241916908752
+--- !u!114 &136714078629049205
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -185,11 +185,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 830300460710888234}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 217a4c3863d8cb94ca11868ad93d0f95, type: 3}
+  m_Script: {fileID: 11500000, guid: f48d0e22b985eb744a59c56be4d07a09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 8092727320853283427, guid: 0155003d351c4ce438bfbe04f3013ba4, type: 3}
-  projectileSpeed: 500
+  yellowButtonMaterial: {fileID: 2100000, guid: cc7f3a6cd9676bc47813881fa8ca8d31, type: 2}
+  activateMat: {fileID: 2100000, guid: 4444c8f13a3960b4f9fa03d53d432794, type: 2}
 --- !u!114 &5172689143095698625
 MonoBehaviour:
   m_ObjectHideFlags: 0

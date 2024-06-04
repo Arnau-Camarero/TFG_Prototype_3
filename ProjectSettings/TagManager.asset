@@ -8,14 +8,11 @@ TagManager:
   - Enemy
   - Wall
   - Door
-  - Weapon
   - Spawner
-  - Enemy2
-  - Scene
-  - Plate
-  - PlateCube
   - CountDown
   - Remove
+  - Neutralizer
+  - Button
   layers:
   - Default
   - TransparentFX
