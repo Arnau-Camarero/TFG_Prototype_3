@@ -5,53 +5,40 @@ using Unity.Netcode;
 
 public class EnemyBehaviour : NetworkBehaviour
 {
-    // El cuerpo del enemigo
     private Rigidbody rb;
     
-
-//     // Objeto del Jugador
-//     private GameObject closestPlayer;
-//     private GameObject[] players;
     public Spawner spawner;
     
-    // Velocidad del enemigo
     public float speed;
 
-    // Tag del Jugador
-    public string playerTag = "Player";
+    public float timeAcumulated = 0;
 
     public override void OnNetworkSpawn(){
         if(!IsServer){
             enabled = false;
-            //GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
             return;
         }
 
         rb = GetComponent<Rigidbody>();
-        //players = GameObject.FindGameObjectsWithTag(playerTag);
     }
 
     void Update()
     {
-
-        // float closestDistance = Mathf.Infinity;
-        // foreach (GameObject player in players)
-        // {
-        //     float distance = Vector3.Distance(transform.position, player.transform.position);
-        //     if (distance < closestDistance)
-        //     {
-        //         closestDistance = distance;
-        //         closestPlayer = player;
-        //     }
-        // }
-        // Dirección enemigo
-        Vector3 direction = transform.forward.normalized * speed * Time.deltaTime;
-        
+        timeAcumulated += (Time.time/100000000);
+        Vector3 direction = transform.forward.normalized * speed * timeAcumulated;
         rb.MovePosition(transform.position + direction);
-
     }
 
-    public override void OnDestroy(){
-        spawner.enemyCounter.Remove(this.gameObject);
+    public override void OnDestroy()
+    {
+        if (spawner != null && spawner.enemyCounter != null)
+        {
+            spawner.enemyCounter.Remove(this.gameObject);
+        }
+        else
+        {
+            Debug.LogWarning("Spawner or enemyCounter is null in EnemyBehaviour.OnDestroy()");
+        }
     }
+
 }

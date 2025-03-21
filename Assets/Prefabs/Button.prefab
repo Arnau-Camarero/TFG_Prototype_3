@@ -142,6 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   matCopy: {fileID: 0}
+  originalButtonMaterial: {fileID: 0}
   yellowButtonMaterial: {fileID: 2100000, guid: cc7f3a6cd9676bc47813881fa8ca8d31, type: 2}
   activateMat: {fileID: 2100000, guid: 4444c8f13a3960b4f9fa03d53d432794, type: 2}
   isActivated: 0
@@ -212,3 +213,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   executing: 0
+  score: {fileID: 0}

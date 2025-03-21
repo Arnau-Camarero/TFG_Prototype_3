@@ -13,6 +13,7 @@ TagManager:
   - Remove
   - Neutralizer
   - Button
+  - Score
   layers:
   - Default
   - TransparentFX

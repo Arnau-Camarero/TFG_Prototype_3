@@ -1,20 +1,46 @@
 using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
 
-public class ChangeColorButtons : MonoBehaviour
+public class ChangeColorButtons : NetworkBehaviour
 {
     public Material yellowButtonMaterial;
     private bool canUse = true;
     private float cooldownTime = 10f;
     public static bool IsActive { get; private set; } = false;
 
+    private NetworkVariable<bool> isColorChangeActive = new NetworkVariable<bool>();
+
     void Update()
     {
+        // Solo el cliente puede usar ChangeColorButtons
+        if (IsServer)
+        {
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.E) && canUse)
         {
-            StartCoroutine(ChangeButtonColorsTemporarily());
-            StartCoroutine(Cooldown());
+            if (IsOwner)
+            {
+                StartCoroutine(ChangeButtonColorsTemporarily());
+                StartCoroutine(Cooldown());
+                RequestColorChangeServerRpc();
+            }
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void RequestColorChangeServerRpc()
+    {
+        isColorChangeActive.Value = true;
+        TriggerColorChangeClientRpc();
+    }
+
+    [ClientRpc]
+    void TriggerColorChangeClientRpc()
+    {
+        StartCoroutine(ChangeButtonColorsTemporarily());
     }
 
     IEnumerator ChangeButtonColorsTemporarily()
@@ -27,18 +53,13 @@ public class ChangeColorButtons : MonoBehaviour
         for (int i = 0; i < buttons.Length; i++)
         {
             Renderer renderer = buttons[i].GetComponent<Renderer>();
-            ButtonManager buttonManager = buttons[i].GetComponent<ButtonManager>();
             if (renderer != null)
             {
-                if(buttonManager.isActivated){
-                    originalMaterials[i] = buttonManager.matCopy;
-                }else{
-                    originalMaterials[i] = renderer.material;
-                }
+                originalMaterials[i] = renderer.material;
                 renderer.material = yellowButtonMaterial;
             }
         }
-        
+
         yield return new WaitForSeconds(5);
 
         for (int i = 0; i < buttons.Length; i++)
@@ -50,14 +71,20 @@ public class ChangeColorButtons : MonoBehaviour
             }
         }
 
+        // Llamar a ApplyButtonColors para restaurar los materiales asignados por SelectButtonColors
+        SelectButtonColors selectButtonColors = FindObjectOfType<SelectButtonColors>();
+        if (selectButtonColors != null)
+        {
+            selectButtonColors.ApplyButtonColors(selectButtonColors.buttonAssignments.Value);
+        }
+
         IsActive = false;
     }
 
-    IEnumerator Cooldown(){
-
+    IEnumerator Cooldown()
+    {
         canUse = false;
         yield return new WaitForSeconds(cooldownTime);
         canUse = true;
-        
     }
 }
