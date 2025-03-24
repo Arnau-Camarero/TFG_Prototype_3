@@ -5,10 +5,14 @@ using Unity.Netcode;
 
 public class Score : NetworkBehaviour
 {
+    [SerializeField] private GameObject hostButton;
+    [SerializeField] private GameObject joinButton;
+    [SerializeField] private GameObject joinCodeInputField;
     public TextMeshProUGUI displayText;
     public TextMeshProUGUI scoreText;
     private int requiredPlayers = 2; // Set this to the number of players required to start the countdown
     private int connectedPlayers = 0;
+    private int objectiveScore = 2500;
     private NetworkVariable<int> score = new NetworkVariable<int>(0);
 
     public override void OnNetworkSpawn()
@@ -21,6 +25,7 @@ public class Score : NetworkBehaviour
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
 
         UpdateScoreText(score.Value);
+        HideUIElements();
     }
 
     private void OnClientConnected(ulong clientId)
@@ -47,10 +52,20 @@ public class Score : NetworkBehaviour
 
     private IEnumerator StartScore()
     {
-        while (true)
+        while (objectiveScore > score.Value)
         {
             yield return new WaitForSeconds(10f);
             UpdateScoreServerRpc(5);
+        }
+
+        if (displayText != null)
+        {
+            displayText.text = "Objective reached!";
+        }
+        else
+        {
+            displayText = GameObject.FindGameObjectWithTag("Objective").GetComponent<TextMeshProUGUI>();
+            displayText.text = "Objective reached!";
         }
     }
 
@@ -102,5 +117,12 @@ public class Score : NetworkBehaviour
             NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
         }
+    }
+
+    private void HideUIElements()
+    {
+        hostButton.SetActive(false);
+        joinButton.SetActive(false);
+        joinCodeInputField.SetActive(false);
     }
 }

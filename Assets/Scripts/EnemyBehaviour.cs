@@ -10,6 +10,7 @@ public class EnemyBehaviour : NetworkBehaviour
     public Spawner spawner;
     
     public float speed;
+    private float initialSpeed;
 
     public float timeAcumulated = 0;
 
@@ -20,12 +21,14 @@ public class EnemyBehaviour : NetworkBehaviour
         }
 
         rb = GetComponent<Rigidbody>();
+        initialSpeed = speed;
     }
 
     void Update()
     {
         timeAcumulated += (Time.time/100000000);
-        Vector3 direction = transform.forward.normalized * speed * timeAcumulated;
+        speed = initialSpeed + (timeAcumulated / 100000000);
+        Vector3 direction = transform.forward.normalized * speed * Time.deltaTime;
         rb.MovePosition(transform.position + direction);
     }
 
