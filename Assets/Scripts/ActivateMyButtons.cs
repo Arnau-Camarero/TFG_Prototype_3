@@ -8,7 +8,7 @@ public class ActivateMyButtons : NetworkBehaviour
     public Material yellowButtonMaterial;
     private Material myMaterial;
     private bool canUse = true;
-    private float cooldownTime = 6f;
+    private float cooldownTime = 10f;
 
     public TextMeshProUGUI cooldownTextObject;
 
@@ -16,6 +16,15 @@ public class ActivateMyButtons : NetworkBehaviour
 
     private NetworkVariable<bool> isActivated = new NetworkVariable<bool>();
 
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            cooldownTextObject = GameObject.FindGameObjectWithTag("CountDown").GetComponent<TextMeshProUGUI>();
+            cooldownTextObject.text = "E: Skill Ready!";
+            cooldownTextObject.color = Color.green;
+        }
+    }
     void Start()
     {
         Renderer renderer = GetComponent<Renderer>();
@@ -81,8 +90,18 @@ public class ActivateMyButtons : NetworkBehaviour
     IEnumerator Cooldown()
     {
         canUse = false;
-        StartCoroutine(StartCooldownCounter(cooldownTime));
-        yield return new WaitForSeconds(cooldownTime);
+        float remainingTime = cooldownTime;
+        
+        cooldownTextObject.color = Color.red;
+        while (remainingTime > 0)
+        {
+            cooldownTextObject.text = $"E: Skill in {remainingTime}s";
+            yield return new WaitForSeconds(1f);
+            remainingTime -= 1f;
+        }
+
+        cooldownTextObject.text = "E: Skill Ready!";
+        cooldownTextObject.color = Color.green;
         canUse = true;
     }
 

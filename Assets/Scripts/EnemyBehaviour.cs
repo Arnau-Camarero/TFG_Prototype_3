@@ -9,7 +9,7 @@ public class EnemyBehaviour : NetworkBehaviour
     
     public Spawner spawner;
     
-    public float speed;
+    public float speed = 8.0f;
     private float initialSpeed;
 
     public float timeAcumulated = 0;

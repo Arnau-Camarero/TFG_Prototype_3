@@ -1,15 +1,30 @@
 using UnityEngine;
 using System.Collections;
 using Unity.Netcode;
+using TMPro;
 
 public class ChangeColorButtons : NetworkBehaviour
 {
     public Material yellowButtonMaterial;
     private bool canUse = true;
-    private float cooldownTime = 10f;
+    private float cooldownTime = 20f;
     public static bool IsActive { get; private set; } = false;
 
     private NetworkVariable<bool> isColorChangeActive = new NetworkVariable<bool>();
+
+    public TextMeshProUGUI cooldownTextObject;
+
+    public override void OnNetworkSpawn()
+    {
+        
+        if (!IsServer)
+        {
+            cooldownTextObject = GameObject.FindGameObjectWithTag("CountDown").GetComponent<TextMeshProUGUI>();
+            cooldownTextObject.text = "E: Skill Ready!";
+            cooldownTextObject.color = Color.green;
+
+        }
+    }
 
     void Update()
     {
@@ -60,7 +75,7 @@ public class ChangeColorButtons : NetworkBehaviour
             }
         }
 
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(6);
 
         for (int i = 0; i < buttons.Length; i++)
         {
@@ -71,7 +86,6 @@ public class ChangeColorButtons : NetworkBehaviour
             }
         }
 
-        // Llamar a ApplyButtonColors para restaurar los materiales asignados por SelectButtonColors
         SelectButtonColors selectButtonColors = FindObjectOfType<SelectButtonColors>();
         if (selectButtonColors != null)
         {
@@ -84,7 +98,18 @@ public class ChangeColorButtons : NetworkBehaviour
     IEnumerator Cooldown()
     {
         canUse = false;
-        yield return new WaitForSeconds(cooldownTime);
+        float remainingTime = cooldownTime;
+        
+        cooldownTextObject.color = Color.red;
+        while (remainingTime > 0)
+        {
+            cooldownTextObject.text = $"E: Skill in {remainingTime}s";
+            yield return new WaitForSeconds(1f);
+            remainingTime -= 1f;
+        }
+
+        cooldownTextObject.text = "E: Skill Ready!";
+        cooldownTextObject.color = Color.green;
         canUse = true;
     }
 }
